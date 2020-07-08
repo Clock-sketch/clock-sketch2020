@@ -12,7 +12,7 @@ void ReadInTraces() {
 
 		FIVE_TUPLE tmp_five_tuple;
 		traces[datafileCnt].clear();
-		int datacnt = 0;//最多读STREAMSIZE个数据
+		int datacnt = 0;
 		while (fread(&tmp_five_tuple, 1, ITEM_LENGTH, fin) == ITEM_LENGTH && datacnt < STREAMSIZE) {
 			traces[datafileCnt].push_back(tmp_five_tuple);
 			datacnt++;
@@ -30,23 +30,22 @@ int test_trace(TRACE& trace, BF& bloomfilter, int start_time, int end_time, int 
 	TIME_STAMP* time_stamp=new TIME_STAMP[end_time];
 	ID* id = new ID[end_time];
 	for (int cnt = 0; cnt < end_time; cnt++) {
-		time_stamp[cnt] = *(TIME_STAMP*)(&trace[cnt]);//前8个字节是时间戳
-		id[cnt] = *((ID*)(&trace[cnt])+2)+ *((ID*)(&trace[cnt]) + 3);//ID=源地址+目的地址
+		time_stamp[cnt] = *(TIME_STAMP*)(&trace[cnt]);
+		id[cnt] = *((ID*)(&trace[cnt])+2)+ *((ID*)(&trace[cnt]) + 3);
 		//cout << time_stamp[cnt] << ' ' << id[cnt] << endl;
 	}
 	clock_t starttime = clock();
 	bloomfilter.calc_throughput(id, start_time, end_time, freq);
 	//printf("%d,%d,%d,%.8f", start_time,bloomfilter.window,bloomfilter.memory, bloomfilter.calc_FPR(id,start_time,end_time,freq));
 	clock_t endtime = clock();
-	//printf(",%f\n", (double)end_time / (endtime - starttime));//吞吐率
+
 	delete[]time_stamp;
 	delete[]id;
 	return 0;
 }
 int main() {
 	ReadInTraces();
-	int freq = 1 << 2;//查询频率
-	printf("item_batch测量，探究window和memory对FPR和吞吐率的影响\n");
+	int freq = 1 << 2;
 	printf("starttime,windowsize,memory,ARE,RE\n");
 	for (int i = START_FILE_NO; i <= END_FILE_NO; i++) {
 		int b = 8;

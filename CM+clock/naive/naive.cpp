@@ -20,10 +20,10 @@
 #define MAX(a,b) ((a)>(b)?(a):(b))
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define ABS(a) ((a)>0?(a):(-(a)))
-#define random(a,b) (rand()%(b-a)+a)//产生[a,b)之间的随机整数
+#define random(a,b) (rand()%(b-a)+a)
 using namespace std;
 
-//一个记录流的包次数，起止时间的结构
+
 struct se {
 	int cnt;
 	int lasttime;
@@ -379,22 +379,21 @@ public:
 	double calc_ARE(ID* stream, int start_packet, int end_packet, int freq) {
 
 
-		double RE_sum = 0;//每个流错误率之和
-		int te = 0;//有效流的计数
-		double s = 0;//统计aae,
-		double pack = 0;//统计包的数目
+		double RE_sum = 0;
+		int te = 0;
+		double s = 0;
+		double pack = 0;
+		for (int i = 0; i < end_packet; i++) {
 
-		for (int i = 0; i < end_packet; i++) {//i代表当前包
-		//插入数据
 			insert(stream[i]);
-			//查询部分
+
 
 			if (i >= start_packet && (i - start_packet) % freq == 0) {
-				int q = stream[i];//查询q是否在bloom中
+				int q = stream[i];
 				int ans = query(q);
 				int j = i - 1;
 				int last = i;
-				int bagcnt = 1;//统计数据流出现的次数，若小于3则舍弃
+				int bagcnt = 1;
 				for (; j >= 0; j--) {
 					if (stream[j] == q)
 					{
@@ -423,7 +422,7 @@ public:
 
 TRACE traces[END_FILE_NO - START_FILE_NO + 1];
 #define STREAMSIZE (1<<21)
-//读入需要的数据
+
 void ReadInTraces() {
 	for (int datafileCnt = START_FILE_NO; datafileCnt <= END_FILE_NO; datafileCnt++) {
 		char datafileName[100];
@@ -434,7 +433,7 @@ void ReadInTraces() {
 
 		FIVE_TUPLE tmp_five_tuple;
 		traces[datafileCnt].clear();
-		int datacnt = 0;//最多读STREAMSIZE个数据
+		int datacnt = 0;
 		while (fread(&tmp_five_tuple, 1, ITEM_LENGTH, fin) == ITEM_LENGTH && datacnt < STREAMSIZE) {
 			traces[datafileCnt].push_back(tmp_five_tuple);
 			datacnt++;
@@ -451,15 +450,15 @@ int test_trace(TRACE& trace, cm_sketch& CM, int start_time, int end_time, int fr
 	TIME_STAMP* time_stamp = new TIME_STAMP[end_time];
 	ID* id = new ID[end_time];
 	for (int cnt = 0; cnt < end_time; cnt++) {
-		time_stamp[cnt] = *(TIME_STAMP*)(&trace[cnt]);//前8个字节是时间戳
-		id[cnt] = *((ID*)(&trace[cnt]) + 2) + *((ID*)(&trace[cnt]) + 3);//ID=源地址+目的地址
+		time_stamp[cnt] = *(TIME_STAMP*)(&trace[cnt]);
+		id[cnt] = *((ID*)(&trace[cnt]) + 2) + *((ID*)(&trace[cnt]) + 3);
 		//cout << time_stamp[cnt] << ' ' << id[cnt] << endl;
 	}
 	//clock_t starttime = clock();
 	CM.calc_ARE(id, start_time, end_time, freq);
 
 	//clock_t endtime = clock();
-	//printf(",%f\n", (double)end_time / (endtime - starttime));//吞吐率
+	//printf(",%f\n", (double)end_time / (endtime - starttime));
 	delete[]time_stamp;
 	delete[]id;
 	return 0;
@@ -469,8 +468,7 @@ int main() {
 	ReadInTraces();
 	printf("window,memory,ARE\n");
 
-	
-	//对每个文件依次测试
+
     srand(clock());
 	for (int i = START_FILE_NO; i <= END_FILE_NO; i++) {
 		for (int count = 2; count <= 2; count*=2) {

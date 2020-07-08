@@ -25,22 +25,22 @@ public:
 		hash_num, //number of hash function
 		max_cell_num,
 		group_size;
-	double bias = 0;//由于每次计算出来的刷新的cell数可能不是整数，其小数部分在此累积，以减小误差
+	double bias = 0;
 	BOBHash32* hash;
 	BOBHash32 hash_time_offset;
 	TIME_STAMP* last_time;
 	TIME_STAMP* first_time;
 	//uint8_t* bf;
 	int current_time;
-	int current_pointer = 0;//更新时指针
-	int pointer_speed;//指针移动的速度
+	int current_pointer = 0;
+	int pointer_speed;
 	BF(int _window, int _memory,
 		int _hash_num)
 	{
 		window = _window,
 			memory = _memory,
 			hash_num = _hash_num,
-			max_cell_num = memory/(8+8),//要算上记录上次抵达时间的last_time数组的大小
+			max_cell_num = memory/(8+8),
 		hash = new BOBHash32[hash_num];
 		last_time = new TIME_STAMP[max_cell_num];
 		first_time = new TIME_STAMP[max_cell_num];
@@ -64,11 +64,11 @@ public:
 
 	}
 	
-	void refresh(long long times = 1) {//times表示时间戳的改变量
+	void refresh(long long times = 1) {
 		times = times;
 		return;
 	}
-	int query(int x)//查询x持续出现的时间
+	int query(int x)
 	{
 		int firsttime = 0;
 		for (int i = 0; i < hash_num; i++)
@@ -94,7 +94,7 @@ public:
 		refresh(1);
 	}
 	
-	double calc_FPR(ID* stream, int start_time, int end_time, int freq)//三个参数分别表示：查询开始的时间，查询结束的时间，每几个数查询一次
+	double calc_FPR(ID* stream, int start_time, int end_time, int freq)
 	{
 		int lim;
 		switch (window)
@@ -111,19 +111,19 @@ public:
 		double total_err = 0;
 		double are = 0;
 		int query_time = 0;
-		for (int i = 0; i < end_time; i++) {//i代表当前时间
-		//先插入数据,后查询
+		for (int i = 0; i < end_time; i++) {
+
 		
-			//插入数据
+
 			insert(stream[i]);
-			//查询部分
+
 			if (i >= start_time && (i - start_time) % freq == 0) {
 				
-				int q = stream[i];//查询q的长度（注：这时stream[i]刚刚被插入）
-				int trueans = 0;//真实答案
+				int q = stream[i];
+				int trueans = 0;
 				int j = i - 1;
 				int last = i;
-				int bagcnt = 1;//统计数据流出现的次数，若小于3则舍弃
+				int bagcnt = 1;
 				for (; j >= 0; j--) {
 					if (stream[j] == q)
 					{
@@ -150,16 +150,16 @@ public:
 		//printf("total,length,number,both,either\n%d,%d,%d,%d,%d",query_time,length,number,both,either);
 		return (double)total_err / query_time;//FPR
 	}
-	double calc_throughput(ID* stream, int start_time, int end_time, int freq)//三个参数分别表示：查询开始的时间，查询结束的时间，每几个数查询一次
+	double calc_throughput(ID* stream, int start_time, int end_time, int freq)
 	{
 		clock_t starttime = clock();
-		for (int i = 0; i < end_time; i++) {//i代表当前时间			
+		for (int i = 0; i < end_time; i++) {	
 			insert(stream[i]);
 		}
 		clock_t endtime = clock();
 		double thr1 = (double)end_time / (endtime - starttime);
 		starttime = clock();
-		for (int i = 0; i < end_time; i++) {//i代表当前时间			
+		for (int i = 0; i < end_time; i++) {	
 			query(random(1, INT_MAX));
 		}
 		endtime = clock();

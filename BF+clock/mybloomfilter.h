@@ -1,4 +1,3 @@
-//BF(进阶版,指针扫描)
 
 #include <iostream>
 #include <stdio.h>
@@ -31,8 +30,8 @@ public:
 	//bool time_stamp[MAX_CELL_NUM];
 	uint8_t* bf;
 	int current_time;
-	int current_pointer = 0;//更新时指针
-	int pointer_speed;//指针移动的速度
+	int current_pointer = 0;
+	int pointer_speed;
 	BF(int _window, int _memory,
 		int _hash_num,int _bit_per_cell)
 	{
@@ -108,17 +107,16 @@ public:
 		}
 		return 1;
 	}
-	double calc_FPR(ID* stream, int start_time, int end_time, int freq)//三个参数分别表示：查询开始的时间，查询结束的时间，每几个数查询一次
+	double calc_FPR(ID* stream, int start_time, int end_time, int freq)
 	{
 		int TP = 0, FP = 0, FN = 0, TN = 0;
-		for (int i = 0; i < end_time; i++) {//i代表当前时间
-		//先查询，后插入数据
-		//查询部分
+		for (int i = 0; i < end_time; i++) {
+
 
 			if (i >= start_time && (i - start_time) % freq == 0) {
-				int q = random(0, INT32_MAX);//查询q是否在bloom中
+				int q = random(0, INT32_MAX);
 				bool ans = query(q);
-				bool trueans = 0;//真实答案
+				bool trueans = 0;
 				for (int j = i - 1; j >= i - 1.5*window && j >= 0; j--)
 					if (stream[j] == q)
 					{
@@ -126,34 +124,34 @@ public:
 						break;
 					}
 				if (ans)
-					if (trueans)//真阳性
+					if (trueans)
 						TP++;
-					else//假阳性
+					else
 						FP++;
 				else
-					if (trueans)//假阴性
+					if (trueans)
 						FN++;
-					else//真阴性
+					else
 						TN++;
 
 			}
-			//插入数据
+			
 			insert(stream[i]);
 		}
 		double FPR = (double)FP / (FP + TN);
 		printf("%d,%d,%d,%f\n", window, memory, bit_per_cell, FPR);
 		return FPR;
 	}
-	double calc_throughput(ID* stream, int start_time, int end_time, int freq)//三个参数分别表示：查询开始的时间，查询结束的时间，每几个数查询一次
+	double calc_throughput(ID* stream, int start_time, int end_time, int freq)
 	{
 		clock_t starttime = clock();
-		for (int i = 0; i < end_time; i++) {//i代表当前时间			
+		for (int i = 0; i < end_time; i++) {	
 			insert(stream[i]);			
 		}
 		clock_t endtime = clock();
 		double thr1 = (double)end_time / (endtime - starttime);
 		starttime = clock();
-		for (int i = 0; i < end_time; i++) {//i代表当前时间			
+		for (int i = 0; i < end_time; i++) {		
 			query(random(1,INT_MAX));
 		}
 		endtime = clock();

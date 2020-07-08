@@ -7,11 +7,11 @@
 #include<memory.h>
 #include<deque>
 #include"BOBHash32.h"
-#define MYLIMIT lim//抛弃长度过短的包
+#define MYLIMIT lim
 int mylimit[4] = { 50,150,400,1000 };
-#define STREAMSIZE (1<<21)//数据流元素总个数
+#define STREAMSIZE (1<<21
 #define TAKE_TIMESTAMP_INTO_ACCOUNT 0
-#define random(a,b) (rand()%(b-a)+a)//产生[a,b)之间的随机整数
+#define random(a,b) (rand()%(b-a)+a)
 #define TIME_STAMP uint64_t
 #define ID uint32_t
 #define END_FILE_NO 0

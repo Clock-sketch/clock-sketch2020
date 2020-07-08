@@ -12,7 +12,7 @@ void ReadInTraces() {
 
 		FIVE_TUPLE tmp_five_tuple;
 		traces[datafileCnt].clear();
-		int datacnt = 0;//最多读STREAMSIZE个数据
+		int datacnt = 0;
 		while (fread(&tmp_five_tuple, 1, ITEM_LENGTH, fin) == ITEM_LENGTH&&datacnt<STREAMSIZE) {
 			traces[datafileCnt].push_back(tmp_five_tuple);
 			datacnt++;
@@ -30,7 +30,7 @@ int test_trace(TRACE& trace, BF& bloomfilter, int start_time, int end_time, int 
 	TIME_STAMP* time_stamp=new TIME_STAMP[end_time];
 	ID* id = new ID[end_time];
 	for (int cnt = 0; cnt < end_time; cnt++) {
-		id[cnt] = *((ID*)(&trace[cnt]));//ID=源地址+目的地址
+		id[cnt] = *((ID*)(&trace[cnt]));
 		//cout << id[cnt] << endl;
 	}
 	clock_t starttime = clock();
@@ -43,8 +43,8 @@ int test_trace(TRACE& trace, BF& bloomfilter, int start_time, int end_time, int 
 }
 int main() {
 	ReadInTraces();
-	int freq = 1<<3;//查询频率
-	printf("进阶版指针扫描法，探究每个cell包含位数对FPR和吞吐率的影响\n");
+	int freq = 1<<3;
+	printf(" cell 位 FPR \n");
 	printf("window,memory,bit_per_cell,FPR\n");
 	for (int i = START_FILE_NO; i <= END_FILE_NO; i++) {
 		for(int win=1<<16;win<=1<<16;win*=2)
