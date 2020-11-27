@@ -6,7 +6,7 @@ This repostory contains all the codes related to the manuscript submitted to SIG
 
 BOBHash is used as the hash function in the code.
 
-Technical_report contains all pseudo code for four algorithms.
+Technical_report is the paper which contains all pseudo codes for four algorithms.
 
 We give both single thread and multiple thread implementation for Clock-sketch.
 
